@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import MapView from "./components/MapView";
+import AddSpotForm from "./components/AddSpotForm";
+import { useState, useEffect } from "react";
+import { supabase } from "./supabase/client";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [types, setTypes] = useState([]);
+  const [filterType, setFilterType] = useState("");
+
+  const handleSpotAdded = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "",
+    latitude: "",
+    longitude: "",
+    description: "",
+    contact: "",
+  });
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      const { data, error } = await supabase
+        .from("help_spots")
+        .select("type", { count: "exact", head: false });
+
+      if (error) {
+        console.error("Error fetching types:", error);
+      } else {
+        const uniqueTypes = [...new Set(data.map((item) => item.type))];
+        setTypes(uniqueTypes);
+      }
+    };
+
+    fetchTypes();
+  }, [refreshTrigger]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <AddSpotForm
+        onAdded={handleSpotAdded}
+        form={formData}
+        setForm={setFormData}
+      />
+
+      <div style={{ padding: "1rem" }}>
+        <label>Filter by Type: </label>
+        <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+          <option value="">All</option>
+          {types.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <MapView
+        refreshTrigger={refreshTrigger}
+        filterType={filterType}
+        form={formData}
+        setForm={setFormData}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
