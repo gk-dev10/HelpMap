@@ -15,6 +15,9 @@ function App() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [userSpots, setUserSpots] = useState([]);
+
   useEffect(() => {
   const getUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -75,6 +78,7 @@ function App() {
     longitude: "",
     description: "",
     contact: "",
+    user_id:""
   });
 
   const handleSpotAdded = () => {
@@ -86,7 +90,8 @@ function App() {
     const fetchTypes = async () => {
       const { data, error } = await supabase
         .from("help_spots")
-        .select("type", { count: "exact", head: false });
+        .select("type", { count: "exact", head: false })
+        .order("type", { ascending: true });
 
       if (error) {
         console.error("Error fetching types:", error);
@@ -98,6 +103,25 @@ function App() {
 
     fetchTypes();
   }, [refreshTrigger]);
+
+  const handleOpenProfile = async () => {
+  if (!user) {
+    alert("You are not logged in.");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("help_spots")
+    .select("*")
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Failed to fetch user's spots:", error);
+  } else {
+    setUserSpots(data || []);
+    setShowProfileModal(true);
+  }
+};
 
   return (
     <>
@@ -143,9 +167,35 @@ function App() {
     />
   </div>
 
+  {showProfileModal && (
+  <div style={styles.modalBackdrop}>
+    <div style={styles.modalContent}>
+      <h3>User Profile</h3>
+      <p><strong>Name:</strong> {user?.user_metadata?.name || user?.email}</p>
+
+      <h4>Your Added Spots:</h4>
+      {userSpots.length === 0 ? (
+        <p>You haven’t added any spots yet.</p>
+      ) : (
+        <ul>
+          {userSpots.map((spot) => (
+            <li key={spot.id}>
+              <strong>{spot.name}</strong> ({spot.type})
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <button onClick={() => setShowProfileModal(false)} style={styles.closeButton}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
   <div style = {{flex : 1, display: "flex", justifyContent: "center"}}>
     <button
-        onClick={() => {}}
+        onClick={() => {handleOpenProfile()}}
         style={{
           bottom: "20px",
           right: "20px",
@@ -176,6 +226,7 @@ function App() {
         }}
         form={formData}
         setForm={setFormData}
+        user={user}
       />
       <button onClick={() => setShowModal(false)} style={styles.closeButton}>
         Close
@@ -183,6 +234,8 @@ function App() {
     </div>
   </div>
 )}
+
+
 
 
       {/* MAP VIEW */}
