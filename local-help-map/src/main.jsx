@@ -1,12 +1,14 @@
-// src/main.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import App from "./App";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import "leaflet/dist/leaflet.css"; // this is important
+import Login from "./pages/Login"; // adjust path if needed
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/login" element={<Login />} />
+    </Routes>
+  </BrowserRouter>
 );

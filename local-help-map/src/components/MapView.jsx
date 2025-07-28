@@ -38,12 +38,11 @@ function LocationSelector({ onSelect }) {
   return null;
 }
 
-const MapView = ({ refreshTrigger, filterType, form, setForm }) => {
+const MapView = ({ refreshTrigger, filterType, radius, form, setForm }) => {
   const [spots, setSpots] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [distances, setDistances] = useState({});
   const [routeCoords, setRouteCoords] = useState([]);
-  const [radius, setRadius] = useState(15); // km
   const [visiblePins, setVisiblePins] = useState([]);
   const [clickedLocation, setClickedLocation] = useState(null);
 
@@ -191,9 +190,9 @@ if (!userLocation) return <div>Loading map...</div>;
   return(
     <div style={{ height: "600px", margin: "1rem" }}>
       <MapContainer
-        center={userLocation}
+        center={userLocation || [0,0]}
         zoom={13}
-        style={{ height: "100vh", width: "100vw" }}
+        style={{ height: "100%", width: "100%" }}
       >
         <LocationSelector onSelect={handleMapClick} />
 
@@ -241,18 +240,6 @@ if (!userLocation) return <div>Loading map...</div>;
           <button onClick={() => setRouteCoords([])}>Dismiss</button>
         )}
       </MapContainer>
-      
-      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1000 }}>
-        <label>Distance: {radius} km</label>
-        <input
-          type="range"
-          min={1}
-          max={50}
-          step={1}
-          value={radius}
-          onChange={(e) => setRadius(parseInt(e.target.value))}
-        />
-      </div>
     </div>
   );
 };
