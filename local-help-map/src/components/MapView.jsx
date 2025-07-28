@@ -7,6 +7,7 @@ import axios from "axios";
 import { Polyline } from "react-leaflet";
 import polyline from "@mapbox/polyline";
 import { useMapEvents } from 'react-leaflet';
+import React from "react";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -188,7 +189,7 @@ const MapView = ({ refreshTrigger, filterType, radius, form, setForm }) => {
 if (!userLocation) return <div>Loading map...</div>; 
 
   return(
-    <div style={{ height: "600px", margin: "1rem" }}>
+    <div style={{ height: "97.5vh", margin : "1rem"}}>
       <MapContainer
         center={userLocation || [0,0]}
         zoom={13}
@@ -240,8 +241,21 @@ if (!userLocation) return <div>Loading map...</div>;
           <button onClick={() => setRouteCoords([])}>Dismiss</button>
         )}
       </MapContainer>
+      <footer style={styles.footer}>
+        <p>&copy; {new Date().getFullYear()} HelpMap — Built with ❤️ by the community</p>
+      </footer>
     </div>
   );
 };
+
+const styles = {
+  footer: {
+    textAlign: "center",
+    padding: 20,
+    marginTop: "auto",
+    backgroundColor: "#eee",
+    fontSize: "0.9rem",
+  },
+}
 
 export default MapView;

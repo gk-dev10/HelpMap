@@ -66,7 +66,17 @@ function App() {
     color: "white",
     border: "none",
     padding: "8px 12px",
-    borderRadius: "6px",
+    borderRadius: "50px",
+    cursor: "pointer",
+  },
+  logoutButton: {
+    marginTop: "10px",
+    left : "10px",
+    backgroundColor: "#dc3545",
+    color: "white",
+    border: "none",
+    padding: "8px 12px",
+    borderRadius: "50px",
     cursor: "pointer",
   },
 };
@@ -103,6 +113,18 @@ function App() {
 
     fetchTypes();
   }, [refreshTrigger]);
+
+  const handleLogout = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error("Logout error:", error.message);
+    alert("Logout failed");
+  } else {
+    setUser(null); // Clear user from state/context
+    setUserSpots([]);
+    alert("Logged out successfully");
+  }
+};
 
   const handleOpenProfile = async () => {
   if (!user) {
@@ -186,9 +208,14 @@ function App() {
         </ul>
       )}
 
-      <button onClick={() => setShowProfileModal(false)} style={styles.closeButton}>
+      <div style = {{display: "flex", justifyContent: "space-between"}}>
+        <button onClick={() => setShowProfileModal(false)} style={styles.closeButton}>
         Close
       </button>
+      <button onClick={() => handleLogout()} style={styles.logoutButton}>
+        Logout
+      </button>
+      </div>
     </div>
   </div>
 )}
@@ -199,12 +226,12 @@ function App() {
         style={{
           bottom: "20px",
           right: "20px",
-          padding: "12px 16px",
+          padding: "8px 10px",
           backgroundColor: "#007bff",
           color: "white",
           border: "none",
-          borderRadius: "25%",
-          fontSize: "20px",
+          borderRadius: "50px",
+          fontSize: "16px",
           cursor: "pointer",
           boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
           zIndex : 1000
@@ -263,7 +290,7 @@ function App() {
           backgroundColor: "#007bff",
           color: "white",
           border: "none",
-          borderRadius: "25%",
+          borderRadius: "50px",
           fontSize: "20px",
           cursor: "pointer",
           boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
