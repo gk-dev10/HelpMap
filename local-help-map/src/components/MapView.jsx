@@ -189,17 +189,21 @@ const MapView = ({ refreshTrigger, filterType, radius, form, setForm }) => {
 if (!userLocation) return <div>Loading map...</div>; 
 
   return(
-    <div style={{ height: "97.5vh", margin : "1rem"}}>
+    <div style={{ height: "97.5vh", margin: "1rem", position: "relative" }}>
       <MapContainer
         center={userLocation || [0,0]}
         zoom={13}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%", borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--shadow-xl)" }}
       >
         <LocationSelector onSelect={handleMapClick} />
 
         {clickedLocation && (
           <Marker position={clickedLocation} icon={customSpotIcon}>
-            <Popup>You selected this location!</Popup>
+            <Popup>
+              <div style={{ textAlign: "center", padding: "var(--space-sm)" }}>
+                <strong style={{ color: "var(--primary-color)" }}>You selected this location!</strong>
+              </div>
+            </Popup>
           </Marker>
         )}
 
@@ -209,7 +213,9 @@ if (!userLocation) return <div>Loading map...</div>;
         {userLocation && (
           <Marker position={userLocation} icon={userIcon}>
             <Popup>
-              <strong>Your Location</strong>
+              <div style={{ textAlign: "center", padding: "var(--space-sm)" }}>
+                <strong style={{ color: "var(--accent-color)" }}>Your Location</strong>
+              </div>
             </Popup>
           </Marker>
         )}
@@ -221,41 +227,130 @@ if (!userLocation) return <div>Loading map...</div>;
             position={[spot.latitude, spot.longitude]}
           >
             <Popup>
-              <strong>{spot.name}</strong><br />
-                Type: {spot.type}<br />
-                {spot.description && <>Info: {spot.description}<br /></>}
-                {spot.contact && <>Contact: {spot.contact}<br /></>}
-                {distances[spot.id] && (
-                  <>Driving Distance: {distances[spot.id]} km</>
+              <div style={{ 
+                minWidth: "200px", 
+                padding: "var(--space-md)",
+                background: "rgba(255, 255, 255, 0.95)",
+                backdropFilter: "blur(10px)",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid rgba(255, 255, 255, 0.2)"
+              }}>
+                <strong style={{ 
+                  color: "var(--text-primary)", 
+                  fontSize: "1.1rem",
+                  display: "block",
+                  marginBottom: "var(--space-sm)"
+                }}>{spot.name}</strong>
+                <span style={{ 
+                  color: "var(--text-secondary)",
+                  fontSize: "0.9rem",
+                  display: "block",
+                  marginBottom: "var(--space-sm)"
+                }}>Type: {spot.type}</span>
+                {spot.image && (
+                  <span>
+                    <img 
+                      src={spot.image} 
+                      alt={spot.name} 
+                      style={{
+                        maxWidth: '150px', 
+                        maxHeight: '100px', 
+                        margin: 'var(--space-sm) 0',
+                        borderRadius: "var(--radius-sm)",
+                        boxShadow: "var(--shadow-sm)"
+                      }} 
+                    /><br />
+                  </span>
                 )}
-                <button onClick={() => handleShowDirection(spot)}>
+                {spot.description && (
+                  <span style={{ 
+                    color: "var(--text-secondary)",
+                    fontSize: "0.9rem",
+                    display: "block",
+                    marginBottom: "var(--space-sm)"
+                  }}>Info: {spot.description}<br /></span>
+                )}
+                {spot.contact && (
+                  <span style={{ 
+                    color: "var(--text-secondary)",
+                    fontSize: "0.9rem",
+                    display: "block",
+                    marginBottom: "var(--space-sm)"
+                  }}>Contact: {spot.contact}<br /></span>
+                )}
+                {distances[spot.id] && (
+                  <span style={{ 
+                    color: "var(--accent-color)",
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    display: "block",
+                    marginBottom: "var(--space-sm)"
+                  }}>Driving Distance: {distances[spot.id]} km</span>
+                )}
+                <button 
+                  onClick={() => handleShowDirection(spot)}
+                  style={{
+                    background: "var(--accent-gradient)",
+                    color: "white",
+                    border: "none",
+                    padding: "var(--space-sm) var(--space-md)",
+                    borderRadius: "var(--radius-sm)",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    transition: "all 0.3s ease",
+                    marginTop: "var(--space-sm)",
+                    width: "100%"
+                  }}
+                >
                   Show Direction
                 </button>
+              </div>
             </Popup>
           </Marker>
         ))}
         {routeCoords.length > 0 && (
-          <Polyline positions={routeCoords} pathOptions={{ color: 'blue' }} />
+          <Polyline positions={routeCoords} pathOptions={{ color: 'var(--accent-color)', weight: 4, opacity: 0.8 }} />
         )}
         {routeCoords.length > 0 && (
-          <button onClick={() => setRouteCoords([])}>Dismiss</button>
+          <button 
+            onClick={() => setRouteCoords([])}
+            style={{
+              position: "absolute",
+              top: "var(--space-md)",
+              right: "var(--space-md)",
+              background: "var(--warning-gradient)",
+              color: "white",
+              border: "none",
+              padding: "var(--space-sm) var(--space-md)",
+              borderRadius: "var(--radius-sm)",
+              cursor: "pointer",
+              fontWeight: "600",
+              fontSize: "0.9rem",
+              transition: "all 0.3s ease",
+              boxShadow: "var(--shadow-md)",
+              zIndex: 1000
+            }}
+          >
+            Dismiss
+          </button>
         )}
       </MapContainer>
-      <footer style={styles.footer}>
-        <p>&copy; {new Date().getFullYear()} HelpMap — Built with ❤️ by the community</p>
+      <footer style={{
+        textAlign: "center",
+        padding: "var(--space-lg)",
+        marginTop: "5%",
+        background: "rgba(255, 255, 255, 0.9)",
+        backdropFilter: "blur(10px)",
+        fontSize: "0.9rem",
+        color: "var(--text-secondary)",
+        borderRadius: "var(--radius-lg) var(--radius-lg) 0 0",
+        borderTop: "1px solid rgba(255, 255, 255, 0.2)"
+      }}>
+        <p>&copy; {new Date().getFullYear()} HelpMap — Built with ❤️ by the "ENTER TEAM NAME"</p>
       </footer>
     </div>
   );
 };
-
-const styles = {
-  footer: {
-    textAlign: "center",
-    padding: 20,
-    marginTop: "auto",
-    backgroundColor: "#eee",
-    fontSize: "0.9rem",
-  },
-}
 
 export default MapView;

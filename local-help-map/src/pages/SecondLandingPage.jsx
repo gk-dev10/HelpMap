@@ -44,15 +44,12 @@ const SecondLandingPage = () => {
   ];
 
   const stats = [
-    { number: "1000+", label: "Help Spots" },
-    { number: "50+", label: "Cities" },
     { number: "24/7", label: "Available" },
     { number: "100%", label: "Free" }
   ];
 
   return (
     <div style={styles.container}>
-      {/* Hero Section */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
           <div style={styles.heroText}>
@@ -74,7 +71,6 @@ const SecondLandingPage = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section style={styles.statsSection}>
         <div style={styles.statsContainer}>
           {stats.map((stat, index) => (
@@ -86,7 +82,6 @@ const SecondLandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section style={styles.featuresSection}>
         <h2 style={styles.sectionTitle}>Why Choose HelpMap?</h2>
         <div style={styles.featuresGrid}>
@@ -109,7 +104,6 @@ const SecondLandingPage = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section style={styles.howItWorksSection}>
         <h2 style={styles.sectionTitle}>How It Works</h2>
         <div style={styles.stepsContainer}>
@@ -133,7 +127,6 @@ const SecondLandingPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaContent}>
           <h2 style={styles.ctaTitle}>Ready to Make a Difference?</h2>
@@ -146,7 +139,6 @@ const SecondLandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
           <div style={styles.footerSection}>
@@ -166,7 +158,7 @@ const SecondLandingPage = () => {
           </div>
         </div>
         <div style={styles.footerBottom}>
-          <p>&copy; {new Date().getFullYear()} HelpMap — Built with ❤️ by the community</p>
+          <p>&copy; {new Date().getFullYear()} HelpMap — Built with ❤️ by the "ENTER TEAM NAME"</p>
         </div>
       </footer>
     </div>
@@ -185,16 +177,23 @@ const styles = {
     color: "white",
     position: "relative",
     overflow: "hidden",
+    minHeight: "60vh", // Add this for vertical space
+    display: "flex",   // Add this
+    alignItems: "center", // Add this for vertical centering
+    justifyContent: "center", // Add this for horizontal centering
   },
   heroContent: {
     maxWidth: "1200px",
     margin: "0 auto",
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column", // Change to column for vertical stacking
+    alignItems: "center",    // Center horizontally
+    justifyContent: "center",// Center vertically
     gap: "60px",
   },
   heroText: {
     flex: 1,
+    textAlign: "center", // Add this to center text and buttons
   },
   mainTitle: {
     fontSize: "4rem",
@@ -215,6 +214,8 @@ const styles = {
     display: "flex",
     gap: "16px",
     flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
   primaryButton: {
     padding: "16px 32px",

@@ -28,58 +28,117 @@ function App() {
 }, []);
 
   const styles = {
-  floatingButton: {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    padding: "12px 20px",
-    fontSize: "16px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    zIndex: 2000,
-  },
-  modalBackdrop: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    zIndex: 1500,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "10px",
-    width: "90%",
-    maxWidth: "400px",
-  },
-  closeButton: {
-    marginTop: "10px",
-    backgroundColor: "#dc3545",
-    color: "white",
-    border: "none",
-    padding: "8px 12px",
-    borderRadius: "50px",
-    cursor: "pointer",
-  },
-  logoutButton: {
-    marginTop: "10px",
-    left : "10px",
-    backgroundColor: "#dc3545",
-    color: "white",
-    border: "none",
-    padding: "8px 12px",
-    borderRadius: "50px",
-    cursor: "pointer",
-  },
-};
+    floatingButton: {
+      position: "fixed",
+      bottom: "var(--space-lg)",
+      right: "var(--space-lg)",
+      padding: "var(--space-md) var(--space-lg)",
+      fontSize: "1rem",
+      background: "var(--primary-gradient)",
+      color: "white",
+      border: "none",
+      borderRadius: "var(--radius-md)",
+      cursor: "pointer",
+      zIndex: 2000,
+      boxShadow: "var(--shadow-lg)",
+      transition: "all 0.3s ease",
+      fontWeight: "600",
+    },
+    modalBackdrop: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      backdropFilter: "blur(4px)",
+      zIndex: 1500,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "var(--space-md)",
+    },
+    modalContent: {
+      backgroundColor: "rgba(255, 255, 255, 0.95)",
+      backdropFilter: "blur(10px)",
+      padding: "var(--space-xl)",
+      borderRadius: "var(--radius-xl)",
+      width: "95vw",
+      maxWidth: "420px",
+      maxHeight: "90vh",
+      overflowY: "auto",
+      boxShadow: "var(--shadow-xl)",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      animation: "fadeIn 0.4s ease-out",
+    },
+    closeButton: {
+      marginTop: "var(--space-md)",
+      background: "var(--warning-gradient)",
+      color: "white",
+      border: "none",
+      padding: "var(--space-sm) var(--space-md)",
+      borderRadius: "var(--radius-md)",
+      cursor: "pointer",
+      fontWeight: "600",
+      transition: "all 0.3s ease",
+      boxShadow: "var(--shadow-md)",
+    },
+    logoutButton: {
+      marginTop: "var(--space-md)",
+      left: "var(--space-md)",
+      background: "var(--danger-color)",
+      color: "white",
+      border: "none",
+      padding: "var(--space-sm) var(--space-md)",
+      borderRadius: "var(--radius-md)",
+      cursor: "pointer",
+      fontWeight: "600",
+      transition: "all 0.3s ease",
+      boxShadow: "var(--shadow-md)",
+    },
+    filterContainer: {
+      position: "fixed",
+      top: "var(--space-lg)",
+      left: undefined,
+      background: "rgba(255, 255, 255, 0.95)",
+      backdropFilter: "blur(10px)",
+      padding: "var(--space-lg)",
+      borderRadius: "var(--radius-lg)",
+      boxShadow: "var(--shadow-lg)",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      zIndex: 1000,
+      width: "260px",
+    },
+    filterTitle: {
+      color: "var(--text-primary)",
+      fontSize: "1.1rem",
+      fontWeight: "bold",
+      marginBottom: "var(--space-md)",
+      textAlign: "center",
+    },
+    filterSelect: {
+      width: "100%",
+      padding: "var(--space-sm)",
+      borderRadius: "var(--radius-sm)",
+      border: "2px solid var(--border-color)",
+      marginBottom: "var(--space-md)",
+      background: "var(--bg-primary)",
+      color: "var(--text-primary)",
+      fontSize: "0.9rem",
+    },
+    radiusSlider: {
+      width: "100%",
+      marginBottom: "var(--space-md)",
+      outline: "none",
+      boxShadow: "none",
+    },
+    radiusLabel: {
+      color: "var(--text-secondary)",
+      fontSize: "0.9rem",
+      marginBottom: "var(--space-sm)",
+      display: "block",
+    },
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -147,125 +206,34 @@ function App() {
 
   return (
     <>
-<div
-  style={{
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 1000,
-    backgroundColor: "white",
-    padding: "10px",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  }}
->
-  <div>
-    <label>Filter by Type: </label>
-    <select
-      value={filterType}
-      onChange={(e) => setFilterType(e.target.value)}
-    >
-      <option value="">All</option>
-      {types.map((type) => (
-        <option key={type} value={type}>
-          {type}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div>
-    <label>Distance: {radius} km</label>
-    <input
-      type="range"
-      min={1}
-      max={50}
-      step={1}
-      value={radius}
-      onChange={(e) => setRadius(parseInt(e.target.value))}
-    />
-  </div>
-
-  {showProfileModal && (
-  <div style={styles.modalBackdrop}>
-    <div style={styles.modalContent}>
-      <h3>User Profile</h3>
-      <p><strong>Name:</strong> {user?.user_metadata?.name || user?.email}</p>
-
-      <h4>Your Added Spots:</h4>
-      {userSpots.length === 0 ? (
-        <p>You haven’t added any spots yet.</p>
-      ) : (
-        <ul>
-          {userSpots.map((spot) => (
-            <li key={spot.id}>
-              <strong>{spot.name}</strong> ({spot.type})
-            </li>
+      {/* Test element to verify CSS variables */}
+      
+      {/* Filter options at top right */}
+      <div style={{ ...styles.filterContainer, right: 'var(--space-lg)', left: 'auto' }}>
+        <div style={styles.filterTitle}>Filter Spots</div>
+        <select
+          style={styles.filterSelect}
+          value={filterType}
+          onChange={e => setFilterType(e.target.value)}
+        >
+          <option value="">All Types</option>
+          {types.map(type => (
+            <option key={type} value={type}>{type}</option>
           ))}
-        </ul>
-      )}
-
-      <div style = {{display: "flex", justifyContent: "space-between"}}>
-        <button onClick={() => setShowProfileModal(false)} style={styles.closeButton}>
-        Close
-      </button>
-      <button onClick={() => handleLogout()} style={styles.logoutButton}>
-        Logout
-      </button>
+        </select>
+        <label style={styles.radiusLabel}>
+          Radius: {radius} km
+          <input
+            type="range"
+            min={1}
+            max={20}
+            value={radius}
+            onChange={e => setRadius(Number(e.target.value))}
+            style={styles.radiusSlider}
+          />
+        </label>
       </div>
-    </div>
-  </div>
-)}
 
-  <div style = {{flex : 1, display: "flex", justifyContent: "center"}}>
-    <button
-        onClick={() => {handleOpenProfile()}}
-        style={{
-          bottom: "20px",
-          right: "20px",
-          padding: "8px 10px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "50px",
-          fontSize: "16px",
-          cursor: "pointer",
-          boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-          zIndex : 1000
-        }}
-        title="Open profile"
-      >
-        Open Profile
-      </button>
-  </div>
-</div>
-
-{showModal && (
-  <div style={styles.modalBackdrop}>
-    <div style={styles.modalContent}>
-      <AddSpotForm
-        onAdded={() => {
-          handleSpotAdded();
-          setShowModal(false); // close modal after adding
-        }}
-        form={formData}
-        setForm={setFormData}
-        user={user}
-      />
-      <button onClick={() => setShowModal(false)} style={styles.closeButton}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
-
-
-
-      {/* MAP VIEW */}
       <MapView
         refreshTrigger={refreshTrigger}
         filterType={filterType}
@@ -274,32 +242,109 @@ function App() {
         setForm={setFormData}
       />
 
-      <button
-        onClick={() => {
-          if (!user) {
-            navigate("/login");
-          } else {
-            setShowModal(true);
-          }
-        }}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          padding: "12px 16px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "50px",
-          fontSize: "20px",
-          cursor: "pointer",
-          boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-          zIndex : 1000
-        }}
-        title="Add Spot"
-      >
-        + Add Spot
-      </button>
+      {showModal && (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.modalContent}>
+            <AddSpotForm
+              onAdded={() => {
+                handleSpotAdded();
+                setShowModal(false);
+              }}
+              form={formData}
+              setForm={setFormData}
+              user={user}
+            />
+            <button onClick={() => setShowModal(false)} style={styles.closeButton}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showProfileModal && (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.modalContent}>
+            <h3>User Profile</h3>
+            <p><strong>Name:</strong> {user?.user_metadata?.name || user?.email}</p>
+
+            <h4>Your Added Spots:</h4>
+            {userSpots.length === 0 ? (
+              <p>You haven't added any spots yet.</p>
+            ) : (
+              <ul>
+                {userSpots.map((spot) => (
+                  <li key={spot.id}>
+                    <strong>{spot.name}</strong> ({spot.type})
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <button onClick={() => setShowProfileModal(false)} style={styles.closeButton}>
+                Close
+              </button>
+              <button onClick={() => handleLogout()} style={styles.logoutButton}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New combined button group at bottom right */}
+      <div style={{
+        position: "fixed",
+        bottom: "30px",
+        right: "30px",
+        zIndex: 2000,
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px"
+      }}>
+        <button
+          onClick={() => {
+            if (!user) {
+              navigate("/login");
+            } else {
+              setShowModal(true);
+            }
+          }}
+          style={{
+            padding: "1.2rem 2.2rem",
+            fontSize: "1.2rem",
+            background: "var(--primary-gradient)",
+            color: "white",
+            border: "none",
+            borderRadius: "var(--radius-md)",
+            cursor: "pointer",
+            fontWeight: "600",
+            boxShadow: "var(--shadow-lg)",
+            transition: "all 0.3s ease"
+          }}
+          title="Add Spot"
+        >
+          + Add Spot
+        </button>
+        <button
+          onClick={() => handleOpenProfile()}
+          style={{
+            padding: "1.2rem 2.2rem",
+            fontSize: "1.2rem",
+            background: "var(--secondary-gradient)",
+            color: "white",
+            border: "none",
+            borderRadius: "var(--radius-md)",
+            cursor: "pointer",
+            fontWeight: "600",
+            boxShadow: "var(--shadow-lg)",
+            transition: "all 0.3s ease"
+          }}
+          title="Open profile"
+        >
+          Profile
+        </button>
+      </div>
     </>
   );
 }

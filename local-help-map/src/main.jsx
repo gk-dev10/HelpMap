@@ -5,6 +5,8 @@ import ReactDOM from "react-dom/client";
 import Login from "./pages/Login"; // adjust path if needed
 import LandingPage from "./pages/LandingPage"; // adjust path if needed
 import SecondLandingPage from "./pages/SecondLandingPage"; // adjust path if needed
+import "./index.css";
+import "./App.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
