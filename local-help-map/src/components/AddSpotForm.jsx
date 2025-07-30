@@ -28,7 +28,7 @@ const AddSpotForm = ({ form, setForm, onAdded, user }) => {
       const fileName = `${user.id}_${Date.now()}.${fileExt}`;
       const { data: uploadData, error: uploadError } = await supabase.storage.from('spot-images').upload(fileName, imageFile);
       if (uploadError) {
-        alert("Image upload failed");
+        alert("Image upload failed: " + uploadError.message);
         setUploading(false);
         return;
       }

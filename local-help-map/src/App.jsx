@@ -11,12 +11,14 @@ function App() {
   const [radius, setRadius] = useState(5); // default radius in km
   const [showForm, setShowForm] = useState(false); // 👈 control visibility of AddSpotForm
   const [showModal, setShowModal] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false); // 👈 control slide panel
 
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [userSpots, setUserSpots] = useState([]);
+  const [isToggleHovered, setIsToggleHovered] = useState(false);
 
   useEffect(() => {
   const getUser = async () => {
@@ -96,18 +98,51 @@ function App() {
       transition: "all 0.3s ease",
       boxShadow: "var(--shadow-md)",
     },
-    filterContainer: {
+    // Slide panel styles
+    slidePanel: {
       position: "fixed",
-      top: "var(--space-lg)",
-      left: undefined,
+      top: 0,
+      right: isPanelOpen ? 0 : "-320px",
+      width: "320px",
+      height: "100vh",
       background: "rgba(255, 255, 255, 0.95)",
       backdropFilter: "blur(10px)",
+      boxShadow: "var(--shadow-xl)",
+      borderLeft: "1px solid rgba(255, 255, 255, 0.2)",
+      zIndex: 1000,
+      transition: "right 0.3s ease-in-out",
+      overflowY: "auto",
+      padding: "var(--space-lg)",
+    },
+    panelToggleButton: {
+      position: "fixed",
+      top: "50%",
+      right: isPanelOpen ? "320px" : 0,
+      transform: "translateY(-50%)",
+      background: "var(--primary-gradient)",
+      color: "white",
+      border: "none",
+      padding: "var(--space-md)",
+      borderRadius: "var(--radius-md) 0 0 var(--radius-md)",
+      cursor: "pointer",
+      zIndex: 1001,
+      boxShadow: "var(--shadow-lg)",
+      transition: "all 0.3s ease",
+      fontSize: "1.2rem",
+    },
+    panelContent: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "var(--space-lg)",
+      height: "100%",
+    },
+    filterContainer: {
+      background: "rgba(255, 255, 255, 0.8)",
+      backdropFilter: "blur(5px)",
       padding: "var(--space-lg)",
       borderRadius: "var(--radius-lg)",
-      boxShadow: "var(--shadow-lg)",
-      border: "1px solid rgba(255, 255, 255, 0.2)",
-      zIndex: 1000,
-      width: "260px",
+      boxShadow: "var(--shadow-md)",
+      border: "1px solid rgba(255, 255, 255, 0.3)",
     },
     filterTitle: {
       color: "var(--text-primary)",
@@ -137,6 +172,30 @@ function App() {
       fontSize: "0.9rem",
       marginBottom: "var(--space-sm)",
       display: "block",
+    },
+    actionButtons: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "var(--space-md)",
+      marginTop: "auto",
+    },
+    actionButton: {
+      padding: "var(--space-md) var(--space-lg)",
+      fontSize: "1rem",
+      color: "white",
+      border: "none",
+      borderRadius: "var(--radius-md)",
+      cursor: "pointer",
+      fontWeight: "600",
+      boxShadow: "var(--shadow-md)",
+      transition: "all 0.3s ease",
+      textAlign: "center",
+    },
+    addSpotButton: {
+      background: "var(--primary-gradient)",
+    },
+    profileButton: {
+      background: "var(--secondary-gradient)",
     },
   };
 
@@ -206,41 +265,175 @@ function App() {
 
   return (
     <>
-      {/* Test element to verify CSS variables */}
-      
-      {/* Filter options at top right */}
-      <div style={{ ...styles.filterContainer, right: 'var(--space-lg)', left: 'auto' }}>
-        <div style={styles.filterTitle}>Filter Spots</div>
-        <select
-          style={styles.filterSelect}
-          value={filterType}
-          onChange={e => setFilterType(e.target.value)}
-        >
-          <option value="">All Types</option>
-          {types.map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-        <label style={styles.radiusLabel}>
-          Radius: {radius} km
-          <input
-            type="range"
-            min={1}
-            max={20}
-            value={radius}
-            onChange={e => setRadius(Number(e.target.value))}
-            style={styles.radiusSlider}
-          />
-        </label>
+      {/* Slide Panel */}
+      <div style={styles.slidePanel}>
+        <div style={styles.panelContent}>
+          {/* Panel Header */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 24,
+            justifyContent: "center"
+          }}>
+            <span style={{ fontSize: 28, marginRight: 8 }}>🗺️</span>
+            <span style={{ fontWeight: 700, fontSize: "1.3rem", letterSpacing: 1 }}>HelpMap Panel</span>
+          </div>
+
+          {/* Profile Preview */}
+          {user && (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              background: "rgba(255,255,255,0.7)",
+              borderRadius: "var(--radius-md)",
+              padding: "12px 16px",
+              marginBottom: 18,
+              boxShadow: "var(--shadow-sm)",
+            }}>
+              <span style={{ fontSize: 28 }}>👤</span>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: "1rem" }}>{user.user_metadata?.name || user.email}</div>
+                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{user.email}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Divider */}
+          <div style={{ height: 1, background: "rgba(0,0,0,0.07)", margin: "12px 0 18px 0", borderRadius: 2 }} />
+
+          {/* Filter Section */}
+          <div style={{
+            background: "rgba(255,255,255,0.85)",
+            borderRadius: "var(--radius-lg)",
+            boxShadow: "var(--shadow-sm)",
+            padding: "var(--space-lg)",
+            marginBottom: 18,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <span style={{ fontSize: 20 }}>🔎</span>
+              <div style={styles.filterTitle}>Filter Spots</div>
+            </div>
+            <select
+              style={{ ...styles.filterSelect, marginBottom: 10, cursor: "pointer" }}
+              value={filterType}
+              onChange={e => setFilterType(e.target.value)}
+            >
+              <option value="">All Types</option>
+              {types.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+            <label style={styles.radiusLabel}>
+              Radius: {radius} km
+              <input
+                type="range"
+                min={1}
+                max={20}
+                value={radius}
+                onChange={e => setRadius(Number(e.target.value))}
+                style={{ ...styles.radiusSlider, cursor: "pointer" }}
+              />
+            </label>
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: "rgba(0,0,0,0.07)", margin: "12px 0 18px 0", borderRadius: 2 }} />
+
+          {/* Action Buttons */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-md)",
+            marginTop: "auto",
+          }}>
+            <button
+              onClick={() => {
+                if (!user) {
+                  navigate("/login");
+                } else {
+                  setShowModal(true);
+                }
+              }}
+              style={{
+                ...styles.actionButton,
+                ...styles.addSpotButton,
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                fontSize: "1.05rem",
+                justifyContent: "center",
+                transition: "background 0.2s, box-shadow 0.2s, transform 0.1s",
+                cursor: "pointer"
+              }}
+              onMouseDown={e => e.currentTarget.style.transform = "scale(0.97)"}
+              onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}
+              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+              title="Add Spot"
+            >
+              <span style={{ fontSize: 20 }}>➕</span> Add Spot
+            </button>
+            <button
+              onClick={() => handleOpenProfile()}
+              style={{
+                ...styles.actionButton,
+                ...styles.profileButton,
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                fontSize: "1.05rem",
+                justifyContent: "center",
+                transition: "background 0.2s, box-shadow 0.2s, transform 0.1s",
+                cursor: "pointer"
+              }}
+              onMouseDown={e => e.currentTarget.style.transform = "scale(0.97)"}
+              onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}
+              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+              title="Open profile"
+            >
+              <span style={{ fontSize: 20 }}>👤</span> Profile
+            </button>
+          </div>
+        </div>
       </div>
 
-      <MapView
-        refreshTrigger={refreshTrigger}
-        filterType={filterType}
-        radius={radius}
-        form={formData}
-        setForm={setFormData}
-      />
+      {/* Panel Toggle Button */}
+      <button
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+        onMouseEnter={() => setIsToggleHovered(true)}
+        onMouseLeave={() => setIsToggleHovered(false)}
+        style={{
+          ...styles.panelToggleButton,
+          background: isToggleHovered ? "var(--secondary-gradient)" : "var(--primary-gradient)",
+          transform: isToggleHovered ? "translateY(-50%) scale(1.05)" : "translateY(-50%)",
+          boxShadow: isToggleHovered ? "var(--shadow-xl)" : "var(--shadow-lg)",
+        }}
+        title={isPanelOpen ? "Close Panel" : "Open Panel"}
+      >
+        {isPanelOpen ? "×" : "☰"}
+      </button>
+
+      {/* Map with adjusted width, fixed to viewport */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          width: isPanelOpen ? "calc(100vw - 320px)" : "100vw",
+          transition: "width 0.3s ease-in-out",
+          zIndex: 0,
+        }}
+      >
+        <MapView
+          refreshTrigger={refreshTrigger}
+          filterType={filterType}
+          radius={radius}
+          form={formData}
+          setForm={setFormData}
+        />
+      </div>
 
       {showModal && (
         <div style={styles.modalBackdrop}>
@@ -291,60 +484,6 @@ function App() {
           </div>
         </div>
       )}
-
-      {/* New combined button group at bottom right */}
-      <div style={{
-        position: "fixed",
-        bottom: "30px",
-        right: "30px",
-        zIndex: 2000,
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px"
-      }}>
-        <button
-          onClick={() => {
-            if (!user) {
-              navigate("/login");
-            } else {
-              setShowModal(true);
-            }
-          }}
-          style={{
-            padding: "1.2rem 2.2rem",
-            fontSize: "1.2rem",
-            background: "var(--primary-gradient)",
-            color: "white",
-            border: "none",
-            borderRadius: "var(--radius-md)",
-            cursor: "pointer",
-            fontWeight: "600",
-            boxShadow: "var(--shadow-lg)",
-            transition: "all 0.3s ease"
-          }}
-          title="Add Spot"
-        >
-          + Add Spot
-        </button>
-        <button
-          onClick={() => handleOpenProfile()}
-          style={{
-            padding: "1.2rem 2.2rem",
-            fontSize: "1.2rem",
-            background: "var(--secondary-gradient)",
-            color: "white",
-            border: "none",
-            borderRadius: "var(--radius-md)",
-            cursor: "pointer",
-            fontWeight: "600",
-            boxShadow: "var(--shadow-lg)",
-            transition: "all 0.3s ease"
-          }}
-          title="Open profile"
-        >
-          Profile
-        </button>
-      </div>
     </>
   );
 }

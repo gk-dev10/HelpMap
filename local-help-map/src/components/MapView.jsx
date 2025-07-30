@@ -189,11 +189,11 @@ const MapView = ({ refreshTrigger, filterType, radius, form, setForm }) => {
 if (!userLocation) return <div>Loading map...</div>; 
 
   return(
-    <div style={{ height: "97.5vh", margin: "1rem", position: "relative" }}>
+    <div style={{ height: "100vh", position: "relative" }}>
       <MapContainer
         center={userLocation || [0,0]}
         zoom={13}
-        style={{ height: "100%", width: "100%", borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--shadow-xl)" }}
+        style={{ height: "100%", width: "100%", borderRadius: "0", overflow: "hidden", boxShadow: "none" }}
       >
         <LocationSelector onSelect={handleMapClick} />
 
@@ -311,29 +311,6 @@ if (!userLocation) return <div>Loading map...</div>;
         ))}
         {routeCoords.length > 0 && (
           <Polyline positions={routeCoords} pathOptions={{ color: 'var(--accent-color)', weight: 4, opacity: 0.8 }} />
-        )}
-        {routeCoords.length > 0 && (
-          <button 
-            onClick={() => setRouteCoords([])}
-            style={{
-              position: "absolute",
-              top: "var(--space-md)",
-              right: "var(--space-md)",
-              background: "var(--warning-gradient)",
-              color: "white",
-              border: "none",
-              padding: "var(--space-sm) var(--space-md)",
-              borderRadius: "var(--radius-sm)",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "0.9rem",
-              transition: "all 0.3s ease",
-              boxShadow: "var(--shadow-md)",
-              zIndex: 1000
-            }}
-          >
-            Dismiss
-          </button>
         )}
       </MapContainer>
       <footer style={{
