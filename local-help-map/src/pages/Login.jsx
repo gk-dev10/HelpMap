@@ -43,7 +43,6 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
-    background: "var(--primary-gradient)",
     position: "relative",
     overflow: "hidden",
   },
